@@ -309,6 +309,22 @@ public class EasyRandomParameters {
     }
 
     /**
+     * Register a custom randomizer for the given field predicate.
+     * <strong>The predicate must at least specify the field type</strong>
+     *
+     * @param field the name of the fixed field
+     * @param value the value of the fixed field
+     * @param <T> The field type
+     * @return the current {@link EasyRandomParameters} instance for method chaining
+     *
+     * @see FieldPredicates
+     */
+    public <T> EasyRandomParameters fixedField(String field, T value) {
+        customRandomizerRegistry.registerRandomizer(f -> field.equals(f.getName()), () -> value);
+        return this;
+    }
+
+    /**
      * Exclude a field from being randomized.
      *
      * @param predicate to identify the field to exclude

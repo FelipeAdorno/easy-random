@@ -25,6 +25,7 @@ package org.jeasy.random;
 
 import org.jeasy.random.api.Randomizer;
 import org.jeasy.random.beans.*;
+import org.jeasy.random.util.FixedField;
 import org.jeasy.random.util.ReflectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -461,6 +462,20 @@ class EasyRandomTest {
 
         // then
         assertThat(concrete.getX()).isInstanceOf(String.class);
+    }
+
+    @Test
+    void fixedFieldShouldBePopulatedWithFixedValue() {
+        Person person = easyRandom.nextObject(Person.class,
+                FixedField.of("email", "felipeadsc@gmail.com"),
+                new FixedField<>("gender", Gender.MALE),
+                new FixedField<>("name", "Fixed Street"));
+
+        assertThat(person).isNotNull();
+        assertThat(person.getId()).isNotNull();
+        assertThat(person.getEmail()).isEqualTo("felipeadsc@gmail.com");
+        assertThat(person.getGender()).isEqualTo(Gender.MALE);
+        assertThat(person.getAddress().getStreet().getName()).isEqualTo("Fixed Street");
     }
 
     private void validatePerson(final Person person) {

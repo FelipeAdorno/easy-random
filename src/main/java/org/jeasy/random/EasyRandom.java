@@ -25,6 +25,7 @@ package org.jeasy.random;
 
 import org.jeasy.random.api.*;
 import org.jeasy.random.randomizers.misc.EnumRandomizer;
+import org.jeasy.random.util.FixedField;
 import org.jeasy.random.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -97,6 +98,24 @@ public class EasyRandom extends Random {
      * @throws ObjectCreationException when unable to create a new instance of the given type
      */
     public <T> T nextObject(final Class<T> type) {
+        if (type.isRecord()) {
+            return createRandomRecord(type);
+        } else {
+            return doPopulateBean(type, new RandomizationContext(type, parameters));
+        }
+    }
+
+    /**
+     * Generate a random instance of the given type.
+     *
+     * @param type           the type for which an instance will be generated
+     * @param <T>            the actual type of the target object
+     * @param fixedFields    the specific field values of the target object
+     * @return a random instance of the given type
+     * @throws ObjectCreationException when unable to create a new instance of the given type
+     */
+    public <T> T nextObject(final Class<T> type, FixedField<?>... fixedFields) {
+        Arrays.stream(fixedFields).forEach(fixedField -> parameters.fixedField(fixedField.fieldName(), fixedField.fieldValue()));
         if (type.isRecord()) {
             return createRandomRecord(type);
         } else {
